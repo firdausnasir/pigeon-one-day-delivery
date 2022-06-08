@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('orders')->group(function () {
+    Route::post('submit', [\App\Http\Controllers\Api\OrderController::class, 'submit']);
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
