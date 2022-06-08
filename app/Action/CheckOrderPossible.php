@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
-class CheckCapablePigeon
+class CheckOrderPossible
 {
     public static function execute(array $data): Collection
     {

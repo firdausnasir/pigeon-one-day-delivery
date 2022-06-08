@@ -24,7 +24,7 @@ class SubmitOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'distance' => ['required'],
+            'distance' => ['required', 'numeric', 'gt:0'],
             'deadline' => ['required', 'date_format:Y-m-d H:i'],
         ];
     }

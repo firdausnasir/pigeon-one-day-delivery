@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Action\CheckCapablePigeon;
+use App\Action\CheckOrderPossible;
+use App\Action\SubmitOrder;
+use App\Exceptions\OrderNotPossibleException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubmitOrderRequest;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrderController extends Controller
 {
@@ -12,14 +15,22 @@ class OrderController extends Controller
     {
         $data = $request->validated();
 
-        $capable_pigeon = CheckCapablePigeon::execute($data);
-
-        if ($capable_pigeon->isEmpty()) {
+        try {
+            $order = SubmitOrder::execute($data);
+        } catch (OrderNotPossibleException $e) {
             return response()->json([
                 'message' => 'No pigeon is available to deliver before the deadline'
-            ], 404);
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception|\Throwable $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'details' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-
+        return response()->json([
+            'message' => 'Order created',
+            'data'    => $order
+        ], Response::HTTP_CREATED);
     }
 }
