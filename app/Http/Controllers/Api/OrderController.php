@@ -57,6 +57,7 @@ class OrderController extends Controller
     public function delivered(Order $order): \Illuminate\Http\JsonResponse
     {
         $order->delivered_at = now();
+        $order->status       = 'delivered';
         $order->save();
 
         return response()->json([], Response::HTTP_NO_CONTENT);

@@ -2,6 +2,7 @@
 
 namespace App\Action\Order;
 
+use App\Action\Pigeon\CalculateSpeed;
 use App\Action\Pigeon\GetPigeon;
 use App\Exceptions\NoPigeonAvailableException;
 use App\Exceptions\OrderNotPossibleException;
@@ -20,17 +21,19 @@ class SubmitOrder
         $deadline = Arr::get($data, 'deadline', now()->toDateTimeString());
         $deadline = Carbon::parse($deadline);
 
-        $available_pigeons = CheckOrderPossible::execute($data);
+        $is_pigeon_available = CheckOrderPossible::execute($distance, $deadline);
 
-        throw_if($available_pigeons->isEmpty(), new OrderNotPossibleException());
+        throw_if($is_pigeon_available === false, new OrderNotPossibleException());
 
+        $speed  = CalculateSpeed::execute($distance, $deadline);
         $cost   = CalculateCost::execute($data);
-        $pigeon = GetPigeon::execute($available_pigeons);
+        $pigeon = GetPigeon::execute($speed);
 
         throw_if($pigeon === null, new NoPigeonAvailableException());
 
         $order                    = new Order();
         $order->fk_pigeon_id      = $pigeon->id;
+        $order->fk_user_id        = auth()->id();
         $order->distance          = $distance;
         $order->price             = $cost;
         $order->should_deliver_at = $deadline;

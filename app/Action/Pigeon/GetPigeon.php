@@ -8,25 +8,15 @@ use Illuminate\Database\Eloquent\Collection;
 
 class GetPigeon
 {
-    public static function execute(Collection $pigeons): ?Pigeon
+    public static function execute(float | int $speed_needed): ?Pigeon
     {
-        return $pigeons
-            ->fresh('latestOrder')
-            ->each(function (Pigeon $pigeon) {
-                /* @var Order $latestOrder */
-                $latestOrder = $pigeon->latestOrder->first();
+        // reset availability of pigeons first
+        ResetPigeonDowntime::execute();
 
-                if (empty($latestOrder)) return;
-
-                if (now()->floatDiffInHours($latestOrder->created_at) >= $pigeon->downtime) {
-                    $pigeon->delivery_before_downtime = $pigeon->downtime;
-                    $pigeon->is_available             = true;
-                    $pigeon->save();
-                }
-            })
-            ->fresh('latestOrder')
-            ->filter(fn(Pigeon $pigeon) => $pigeon->is_available == 1)
-            ->sortBy(fn(Pigeon $pigeon) => $pigeon->range)
+        return Pigeon::query()
+            ->with('latestOrder')
+            ->available()
+            ->where('speed', '>=', $speed_needed)
             ->first();
     }
 }

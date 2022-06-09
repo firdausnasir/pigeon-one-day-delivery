@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $fk_pigeon_id
+ * @property int $fk_user_id
  * @property int $distance km
  * @property string $price
  * @property string|null $should_deliver_at deadline
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Pigeon|null $pigeon
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order query()
@@ -27,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeliveredAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDistance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFkPigeonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereFkUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereShouldDeliverAt($value)
@@ -76,6 +79,11 @@ class Order extends Model
     public function pigeon()
     {
         return $this->hasOne(Pigeon::class, 'id','fk_pigeon_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'fk_user_id');
     }
 
     public static function resetPigeonDowntime(Pigeon $pigeon)

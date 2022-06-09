@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $delivery_before_downtime How many delivery available before downtime
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Order|null $latestOrder
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Order[] $orders
  * @property-read int|null $orders_count
  * @method static Builder|Pigeon available()
@@ -75,7 +76,7 @@ class Pigeon extends Model
 
     public function latestOrder()
     {
-        return $this->orders()->latest('id')->limit(1);
+        return $this->hasOne(Order::class, 'fk_pigeon_id');
     }
 
     public static function resetDowntime(Pigeon $pigeon)
