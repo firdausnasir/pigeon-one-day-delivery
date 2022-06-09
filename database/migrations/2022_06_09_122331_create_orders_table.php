@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('fk_pigeon_id');
+            $table->unsignedBigInteger('fk_user_id');
             $table->unsignedInteger('distance')->default(0)->comment('km');
             $table->decimal('price', 30);
             $table->timestamp('should_deliver_at')->nullable()->comment('deadline');
