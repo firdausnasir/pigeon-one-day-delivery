@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Order;
 
 use App\Models\Pigeon;
 use Carbon\Carbon;
