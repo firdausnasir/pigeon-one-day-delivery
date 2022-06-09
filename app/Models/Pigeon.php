@@ -14,10 +14,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $speed km/h
  * @property int $range km
  * @property int $cost $2/km
- * @property int $is_available
+ * @property bool $is_available
  * @property int $downtime The time it needs to rest between two deliveries (hr)
+ * @property int $delivery_before_downtime How many delivery available before downtime
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Order[] $orders
+ * @property-read int|null $orders_count
  * @method static Builder|Pigeon available()
  * @method static \Database\Factories\PigeonFactory factory(...$parameters)
  * @method static Builder|Pigeon newModelQuery()
@@ -25,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|Pigeon query()
  * @method static Builder|Pigeon whereCost($value)
  * @method static Builder|Pigeon whereCreatedAt($value)
+ * @method static Builder|Pigeon whereDeliveryBeforeDowntime($value)
  * @method static Builder|Pigeon whereDowntime($value)
  * @method static Builder|Pigeon whereId($value)
  * @method static Builder|Pigeon whereIsAvailable($value)
@@ -38,6 +42,21 @@ class Pigeon extends Model
 {
     use HasFactory;
 
+    protected $hidden = ['id', ''];
+
+    protected $casts = ['is_available' => 'boolean'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::updating(function (self $model) {
+            if ($model->delivery_before_downtime == 0) {
+                $model->is_available = false;
+            }
+        });
+    }
+
     /**
      * Scope a query to only include available pigeons.
      *
@@ -47,5 +66,22 @@ class Pigeon extends Model
     public function scopeAvailable(Builder $query): void
     {
         $query->where('is_available', 1);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'fk_pigeon_id');
+    }
+
+    public function latestOrder()
+    {
+        return $this->orders()->latest('id')->limit(1);
+    }
+
+    public static function resetDowntime(Pigeon $pigeon)
+    {
+        $pigeon->update([
+            'delivery_before_downtime' => $pigeon->downtime
+        ]);
     }
 }

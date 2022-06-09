@@ -14,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('orders')->group(function () {
+Route::post('login', \App\Http\Controllers\Api\LoginController::class);
+
+Route::group(['prefix' => 'order', 'middleware' => 'auth:sanctum'], function () {
     Route::post('submit', [\App\Http\Controllers\Api\OrderController::class, 'submit']);
+    Route::post('details/{order}', [\App\Http\Controllers\Api\OrderController::class, 'details']);
+    Route::post('{order}/delivered', [\App\Http\Controllers\Api\OrderController::class, 'delivered']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

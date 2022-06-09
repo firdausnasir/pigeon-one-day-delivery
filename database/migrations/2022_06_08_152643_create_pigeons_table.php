@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('cost')->comment('$2/km')->default(2);
             $table->boolean('is_available')->default(true);
             $table->integer('downtime')->comment('The time it needs to rest between two deliveries (hr)');
+            $table->integer('delivery_before_downtime')->comment('How many delivery available before downtime');
             $table->timestamps();
         });
     }
