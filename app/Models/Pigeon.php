@@ -76,7 +76,7 @@ class Pigeon extends Model
 
     public function latestOrder()
     {
-        return $this->hasOne(Order::class, 'fk_pigeon_id');
+        return $this->hasOne(Order::class, 'fk_pigeon_id')->latest('id');
     }
 
     public static function resetDowntime(Pigeon $pigeon)
