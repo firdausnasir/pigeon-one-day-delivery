@@ -38,6 +38,13 @@ This repo is a minimum-viable API created for an on-demand same-day traffic-inde
 | email     | yes      |
 | password  | yes      |
 
+### Sample user
+
+| Parameter | Value            |
+|-----------|------------------|
+| email     | test@example.com |
+| password  | test1234         |
+
 ### Response
 
 ```yaml
