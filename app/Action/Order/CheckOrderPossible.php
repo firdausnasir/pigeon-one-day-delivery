@@ -17,7 +17,7 @@ class CheckOrderPossible
 
         return Pigeon::query()
             ->available()
-            ->where('speed', '>=', $speed_needed)
+            ->speedRange($distance, $speed_needed)
             ->exists();
     }
 }

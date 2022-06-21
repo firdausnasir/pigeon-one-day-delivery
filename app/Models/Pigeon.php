@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|Pigeon newModelQuery()
  * @method static Builder|Pigeon newQuery()
  * @method static Builder|Pigeon query()
+ * @method static Builder|Pigeon speedRange(int|float $distance, int|float $speed_needed)
  * @method static Builder|Pigeon whereCost($value)
  * @method static Builder|Pigeon whereCreatedAt($value)
  * @method static Builder|Pigeon whereDeliveryBeforeDowntime($value)
@@ -67,6 +68,12 @@ class Pigeon extends Model
     public function scopeAvailable(Builder $query): void
     {
         $query->where('is_available', 1);
+    }
+
+    public function scopeSpeedRange(Builder $query, float | int $distance, float | int $speed_needed)
+    {
+        $query->where('speed', '>=', $speed_needed)
+            ->where('range', '>=', $distance);
     }
 
     public function orders()

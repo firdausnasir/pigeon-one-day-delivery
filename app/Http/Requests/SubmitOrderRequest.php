@@ -25,7 +25,7 @@ class SubmitOrderRequest extends FormRequest
     {
         return [
             'distance' => ['required', 'numeric', 'gt:0'],
-            'deadline' => ['required', 'date_format:Y-m-d H:i'],
+            'deadline' => ['required', 'date_format:Y-m-d H:i', 'after_or_equal:now'],
         ];
     }
 }

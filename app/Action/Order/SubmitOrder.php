@@ -27,7 +27,7 @@ class SubmitOrder
 
         $speed  = CalculateSpeed::execute($distance, $deadline);
         $cost   = CalculateCost::execute($data);
-        $pigeon = GetPigeon::execute($speed);
+        $pigeon = GetPigeon::execute($distance, $speed);
 
         throw_if($pigeon === null, new NoPigeonAvailableException());
 
